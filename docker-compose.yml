@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   php:
-    image: php:8.2-apache
+    build: ./php
     container_name: php_app
     volumes:
       - ./php:/var/www/html
@@ -19,7 +19,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test_db
+      MYSQL_DATABASE: php_mysql_docker_db
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     ports:
