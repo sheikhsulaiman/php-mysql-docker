@@ -36,13 +36,30 @@ if ($conn) {
             <?php echo htmlspecialchars($_GET['error']); ?>
         </div>
     <?php endif; ?>
-    <form action="process.php" method="POST">
+    <form action="process.php" method="POST" id="regForm" onsubmit="return validateForm()">
         <label for="name">Name:</label><br />
-        <input type="text" id="name" name="name" required /><br />
+        <input type="text" id="name" name="name" required minlength="2" maxlength="50" pattern="[A-Za-z\s]+" /><br />
         <label for="email">Email:</label><br />
-        <input type="email" id="email" name="email" required /><br />
+        <input type="email" id="email" name="email" required maxlength="100" /><br />
         <input type="submit" value="Submit" />
     </form>
+    <script>
+        function validateForm() {
+            var name = document.getElementById('name').value.trim();
+            var email = document.getElementById('email').value.trim();
+            var namePattern = /^[A-Za-z\s]{2,50}$/;
+            var emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+            if (!namePattern.test(name)) {
+                alert('Please enter a valid name (letters and spaces only, 2-50 characters).');
+                return false;
+            }
+            if (!emailPattern.test(email)) {
+                alert('Please enter a valid email address.');
+                return false;
+            }
+            return true;
+        }
+    </script>
     <?php if (!empty($users)): ?>
         <h3>Registered Users</h3>
         <table border="1">

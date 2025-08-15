@@ -12,10 +12,25 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$name  = $_POST['name'];
-$email = $_POST['email'];
+$name  = isset($_POST['name']) ? trim($_POST['name']) : '';
+$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 
-$sql = "INSERT INTO users (name, email) VALUES ('$name', '$email')";
+// Server-side validation
+$errors = [];
+if (!preg_match('/^[A-Za-z\s]{2,50}$/', $name)) {
+    $errors[] = 'Invalid name.';
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 100) {
+    $errors[] = 'Invalid email.';
+}
+
+if ($errors) {
+    mysqli_close($conn);
+    header('Location: /' . urlencode(implode(" ", $errors)));
+    exit();
+}
+
+$sql = "INSERT INTO users (name, email) VALUES ('" . mysqli_real_escape_string($conn, $name) . "', '" . mysqli_real_escape_string($conn, $email) . "')";
 if (mysqli_query($conn, $sql)) {
     mysqli_close($conn);
     header('Location: /');
